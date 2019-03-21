@@ -1,0 +1,22 @@
+{
+  "name": "serv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaavito/serv.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xaavito/serv/issues"
+  },
+  "homepage": "https://github.com/xaavito/serv#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
