@@ -1,18 +1,22 @@
 var express = require('express');
 const bodyParser = require('body-parser');
 const pino = require('express-pino-logger')();
+var cors = require('cors');
 var app = express();
+
+app.use(cors());
 
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
 
-app.get('/api/greeting', (req, res) => {
-    const name = req.query.name || 'World';
+app.post('/api/greeting', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({ greeting: `Hello ${name}!` }));
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(JSON.stringify({ a: 1 }));
 });
 
-app.listen(3001, function () {
-    console.log('Example app listening on port 3001!');
+app.listen(5001, function () {
+    console.log('Example app listening on port 5001!');
 });
