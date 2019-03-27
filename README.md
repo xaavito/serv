@@ -17,15 +17,15 @@ heroku logs --tail
 ## DB Structure
 ```
 CREATE TABLE partido (
-   id NUMERIC NOT NULL,
+   id SERIAL NOT NULL,
    fecha date NOT NULL,
    goles_blanco numeric not null,
    goles_azul numeric not null,
-   CONSTRAINT id_pk PRIMARY KEY (id)
+   CONSTRAINT id_partido_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE jugador (
-   id NUMERIC NOT NULL,
+   id SERIAL NOT NULL,
    nombre VARCHAR(1000) NOT NULL,
    apellido VARCHAR(1000) NOT NULL,
    mail VARCHAR(1000) NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE jugador (
 );
 
 CREATE TABLE partido_jugador (
-   id_partido NUMERIC NOT NULL REFERENCES partido(id),
-   id_jugador NUMERIC NOT NULL REFERENCES jugador(id),
+   id_partido INTEGER NOT NULL REFERENCES partido(id),
+   id_jugador INTEGER NOT NULL REFERENCES jugador(id),
    asistio boolean,
    condicion VARCHAR(20) not null
 );
