@@ -18,13 +18,13 @@ app.get('/', function (req, res) {
 
 app.post('/api/greeting', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(JSON.stringify({ a: 1 }));
 });
 
 app.post('/crear-partido', async (req, res) => {
     try {
+        console.log(req.body);
         var sentMessage = JSON.parse(req.body);
         const client = await pool.connect()
         const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (' + sentMessage.fecha + ',0,0)');
