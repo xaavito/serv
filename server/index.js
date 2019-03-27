@@ -17,6 +17,6 @@ app.post('/api/greeting', (req, res) => {
     res.send(JSON.stringify({ a: 1 }));
 });
 
-app.listen(5001, function () {
-    console.log('Example app listening on port 5001!');
+app.listen(process.env.PORT || 5001, function () {
+    console.log('Example app listening on port ....!');
 });
