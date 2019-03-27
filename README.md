@@ -15,6 +15,7 @@ heroku logs --tail
 ```
 
 ## DB Structure
+```
 CREATE TABLE partido (
    id NUMERIC NOT NULL,
    fecha date NOT NULL,
@@ -38,6 +39,7 @@ CREATE TABLE partido_jugador (
    asistio boolean,
    condicion VARCHAR(20) not null
 );
+```
 
 ## CONECTARTE CON LA BD
 ```
