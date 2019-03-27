@@ -23,7 +23,7 @@ app.post('/api/greeting', (req, res) => {
     res.send(JSON.stringify({ a: 1 }));
 });
 
-app.post('/crear-partido', (req, res) => {
+app.post('/crear-partido', async (req, res) => {
     try {
         const client = await pool.connect()
         const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (' + req.body.fecha + ',0,0)');
