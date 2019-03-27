@@ -1,3 +1,5 @@
+# Server!
+
 ## Correr localmente
 npm run server
 
@@ -8,7 +10,9 @@ https://www.twilio.com/blog/react-app-with-node-js-server-proxy
 https://fulbapp-serv.herokuapp.com/
 
 ## Ver logs del server.
+```
 heroku logs --tail
+```
 
 ## DB Structure
 CREATE TABLE partido (
@@ -36,4 +40,6 @@ CREATE TABLE partido_jugador (
 );
 
 ## CONECTARTE CON LA BD
+```
 heroku pg:psql
+```
