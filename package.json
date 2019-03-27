@@ -5,7 +5,9 @@
   "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node-env-run server --exec nodemon | pino-colada"
+    "server": "node-env-run server --exec nodemon | pino-colada",
+    "start": "npm run server"
+
   },
   "repository": {
     "type": "git",
