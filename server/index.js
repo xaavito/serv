@@ -1,5 +1,4 @@
 var express = require('express');
-const bodyParser = require('body-parser');
 const pino = require('express-pino-logger')();
 var cors = require('cors');
 var app = express();
@@ -20,12 +19,15 @@ const pool = new Pool({
     ssl: true
 });
 
-
-
 app.use(cors());
 
+app.configure(function () {
+    app.use(express.bodyParser());
+    app.use(app.router);
+});
+
 app.get('/', function (req, res) {
-    res.send('Bievenido sl sistema de creacion y confirmacion de partidos de los miercoles');
+    res.send('Bievenido al sistema de creacion y confirmacion de partidos de los miercoles');
 });
 
 app.post('/api/greeting', (req, res) => {
@@ -36,7 +38,7 @@ app.post('/api/greeting', (req, res) => {
 
 app.post('/crear-partido', async (req, res) => {
     try {
-        console.log(req.body);
+        pino.log(req.body);
         var sentMessage = JSON.parse(req.body);
         const client = await pool.connect()
         const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (' + sentMessage.fecha + ',0,0)');
@@ -54,14 +56,14 @@ app.post('/crear-partido', async (req, res) => {
         };
 
         transporter.sendMail(mailOptions, function (err, info) {
-            if(err)
-              console.log("Error enviando mail partido " +err)
+            if (err)
+                console.log("Error enviando mail partido " + err)
             else
-              console.log("Salio el email aparentemente bien" +info);
-         });
+                console.log("Salio el email aparentemente bien " + info);
+        });
     } catch (err) {
         console.error(err);
-        res.send("Error creando partido" + err);
+        res.send("Error creando partido " + err);
     }
 });
 
