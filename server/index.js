@@ -39,7 +39,7 @@ app.post('/crear-partido', async (req, res) => {
     try {
         console.log(req.body.fecha);
         const client = await pool.connect()
-        const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date(' + req.body.fecha + ',\'DD/MM/YYYY\'),0,0)');
+        const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date(\'' + req.body.fecha + '\',\'DD/MM/YYYY\'),0,0)');
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
         client.release();
