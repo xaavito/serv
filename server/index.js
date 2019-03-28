@@ -44,11 +44,12 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         client.release();
         
+        //move to cco??
         const mailOptions = {
             from: 'partidodelosmiercoles@gmail.com', // sender address
-            to: 'danielplopez@gmail.com', // list of receivers
-            subject: 'Prueba de mailer systeemmm', // Subject line
-            html: '<p>a verrrrr</p>'// plain text body
+            to: 'danielplopez@gmail.com; javiermartingonzalez@gmail.com; nicolaspmoreira@gmail.com; matyluzzi@gmail.com', // list of receivers
+            subject: 'Partido de los Miercoles, Fecha: ' + req.body.fecha, // Subject line
+            html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/?id=10000">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
         };
 
         transporter.sendMail(mailOptions, function (err, info) {
