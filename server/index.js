@@ -1,4 +1,5 @@
 var express = require('express');
+const bodyParser = require('body-parser');
 const pino = require('express-pino-logger')();
 var cors = require('cors');
 var app = express();
@@ -21,10 +22,8 @@ const pool = new Pool({
 
 app.use(cors());
 
-app.configure(function () {
-    app.use(express.bodyParser());
-    app.use(app.router);
-});
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 
 app.get('/', function (req, res) {
     res.send('Bievenido al sistema de creacion y confirmacion de partidos de los miercoles');
@@ -38,10 +37,9 @@ app.post('/api/greeting', (req, res) => {
 
 app.post('/crear-partido', async (req, res) => {
     try {
-        pino.log(req.body);
-        var sentMessage = JSON.parse(req.body);
+        console.log(req.body.fecha);
         const client = await pool.connect()
-        const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (' + sentMessage.fecha + ',0,0)');
+        const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (' + req.body.fecha + ',0,0)');
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
