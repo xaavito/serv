@@ -42,10 +42,8 @@ app.post('/crear-partido', async (req, res) => {
         const result = await client.query('INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date(' + req.body.fecha + ',\'DD/MM/YYYY\'),0,0)');
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
-
-        res.send(JSON.stringify('Partido Creado exitosamente, enviando invitaciones a los jugadores'));
         client.release();
-
+        
         const mailOptions = {
             from: 'partidodelosmiercoles@gmail.com', // sender address
             to: 'danielplopez@gmail.com', // list of receivers
@@ -59,6 +57,8 @@ app.post('/crear-partido', async (req, res) => {
             else
                 console.log("Salio el email aparentemente bien " + info);
         });
+
+        res.send(JSON.stringify('Partido Creado exitosamente, enviando invitaciones a los jugadores'));
     } catch (err) {
         console.error(err);
         res.send("Error creando partido " + err);
