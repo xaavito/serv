@@ -30,4 +30,12 @@ insert into jugador (
    telefono
 ) values ('Javier', 'Gonzalez', 'javiermartingonzalez@gmail.com', '1150447225');
 
+insert into partido_jugador (
+   id_partido,
+   id_jugador,
+   asistio ,
+   condicion) values (mmm,nnn, false, 'B')
+);
+
+
 

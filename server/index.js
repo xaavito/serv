@@ -23,13 +23,22 @@ const generarNuevoPartido = async (pool, fecha) => {
         values: [fecha]
     }
     await client.query(queryInsertarPartido);
+
     console.log("post insert");
+    const partido = await client.query('select max(id) id_partido from partido');
+
+    console.log("partido " + partido.rows[0].id_partido);
 
     const jugadores = await client.query('SELECT * FROM jugador');
     console.log("post jugadores");
     jugadores.rows.forEach(function (jugador) {
         console.log(jugador.id);
         console.log(jugador.nombre);
+        const queryInsertarPartido = {
+            text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion) values ($1,$2, $3, $4)',
+            values: [fecha,,]
+        }
+        ;
         //ACA DEBERIAMOS HACER UN INSERT EN JUGADOR PARTIDO CON CADA UNO DE ESTOS.
     });
     console.log("pre release");
