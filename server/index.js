@@ -28,7 +28,8 @@ const generarNuevoPartido = async (pool, fecha) => {
     const jugadores = await client.query('SELECT * FROM jugador');
     console.log("post jugadores");
     jugadores.rows.forEach(function (jugador) {
-        console.log(jugador);
+        console.log(jugador.id);
+        console.log(jugador.nombre);
         //ACA DEBERIAMOS HACER UN INSERT EN JUGADOR PARTIDO CON CADA UNO DE ESTOS.
     });
     console.log("pre release");
