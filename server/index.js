@@ -15,7 +15,7 @@ var transporter = nodemailer.createTransport({
 });
 
 // METODO QUE GENERA EL NUEVO PARTIDO, ARMA LA LISTA DE INVITADOS Y LAS INSERTA EN LA BD
-const generarNuevoPartido = (pool, fecha) => {
+const generarNuevoPartido = async (pool, fecha) => {
     const client = await pool.connect()
     const queryInsertarPartido = {
         text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
