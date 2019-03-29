@@ -69,7 +69,7 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         //console.log(req.body.fecha);
 
-        this.generarNuevoPartido(pool, req.body.fecha);
+        generarNuevoPartido(pool, req.body.fecha);
 
         //move to cco??
         const mailOptions = {
