@@ -44,7 +44,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
 
     //LOS TRAIGO A ESOS JUGADORES RECIEN INSERTADOS
     const queryJugadoresPorPartido = {
-        text: 'SELECT * FROM jugador_partido where id_partido = $1',
+        text: 'SELECT * FROM partido_jugador where id_partido = $1',
         values: [id_partido]
     };
 
