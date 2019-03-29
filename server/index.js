@@ -109,12 +109,12 @@ app.post('/api/greeting', (req, res) => {
 // METODO ADMIN PARA GENERAR EL EVENTO
 app.post('/crear-partido', async (req, res) => {
     try {
-        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Type', 'application/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
         generarNuevoPartido(pool, req.body.fecha, transporter);
 
-        res.send(JSON.stringify('Partido Creado exitosamente, enviando invitaciones a los jugadores'));
+        res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
     } catch (err) {
         console.error(err);
         res.send("Error creando partido " + err);
