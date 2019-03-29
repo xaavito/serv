@@ -19,7 +19,7 @@ const generarNuevoPartido = async (pool, fecha) => {
     const client = await pool.connect()
     const queryInsertarPartido = {
         text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
-        values: ['\'' + fecha + '\'']
+        values: [fecha]
     }
     await client.query(queryInsertarPartido);
 
