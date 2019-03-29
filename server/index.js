@@ -34,7 +34,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
     const jugadores = await client.query('SELECT * FROM jugador');
 
     //INSERTO A TODOS LOS JUGADORES EN LA INVITACION COMO BAJA
-    jugadores.rows.forEach(async function (jugador) {
+    jugadores.rows.forEach(async (jugador) => {
         const queryInsertarJugadorPartido = {
             text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion) values ($1,$2, $3, $4)',
             values: [id_partido, jugador.id, false, 'B']
@@ -50,7 +50,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
 
     const jugadoresPorPartido = await client.query(queryJugadoresPorPartido);
     console.log("post jugadores");
-    jugadoresPorPartido.rows.forEach(async function (jugador) {
+    jugadoresPorPartido.rows.forEach(async (jugador) => {
         //POR CADA UNO TRAIGO SU INFORMACION POSTA
         const infoJugador = {
             text: 'SELECT * FROM jugador where id = $1',
