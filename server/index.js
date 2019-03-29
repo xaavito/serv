@@ -16,19 +16,22 @@ var transporter = nodemailer.createTransport({
 
 // METODO QUE GENERA EL NUEVO PARTIDO, ARMA LA LISTA DE INVITADOS Y LAS INSERTA EN LA BD
 const generarNuevoPartido = async (pool, fecha) => {
+    console.log("Generar nuevo partido!");
     const client = await pool.connect()
     const queryInsertarPartido = {
         text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
         values: [fecha]
     }
     await client.query(queryInsertarPartido);
+    console.log("post insert");
 
     const jugadores = await client.query('SELECT * FROM jugador');
+    console.log("post jugadores");
     jugadores.rows.forEach(function (jugador) {
         console.log(jugador);
         //ACA DEBERIAMOS HACER UN INSERT EN JUGADOR PARTIDO CON CADA UNO DE ESTOS.
     });
-
+    console.log("pre release");
     client.release();
 }
 
@@ -67,14 +70,14 @@ app.post('/crear-partido', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        //console.log(req.body.fecha);
-
+        
         generarNuevoPartido(pool, req.body.fecha);
 
         //move to cco??
         const mailOptions = {
             from: 'partidodelosmiercoles@gmail.com', // sender address
-            to: 'danielplopez@gmail.com; javiermartingonzalez@gmail.com; nicolaspmoreira@gmail.com; matyluzzi@gmail.com', // list of receivers
+            //to: 'danielplopez@gmail.com; javiermartingonzalez@gmail.com; nicolaspmoreira@gmail.com; matyluzzi@gmail.com', // list of receivers
+            to: 'javiermartingonzalez@gmail.com', // list of receivers
             subject: 'Partido de los Miercoles, Fecha: ' + req.body.fecha, // Subject line
             html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/?id=10000">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
         };
