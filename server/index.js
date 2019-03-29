@@ -109,7 +109,7 @@ app.post('/api/greeting', (req, res) => {
 // METODO ADMIN PARA GENERAR EL EVENTO
 app.post('/crear-partido', async (req, res) => {
     try {
-        res.setHeader('Content-Type', 'application/html');
+        res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
         generarNuevoPartido(pool, req.body.fecha, transporter);
