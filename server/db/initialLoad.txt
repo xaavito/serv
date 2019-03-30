@@ -30,6 +30,13 @@ insert into jugador (
    telefono
 ) values ('Javier', 'Gonzalez', 'javiermartingonzalez@gmail.com', '1150447225');
 
+insert into jugador (
+   nombre,
+   apellido,
+   mail,
+   telefono
+) values ('Daniel', 'Perez Lopez', 'danielplopez@gmail.com', '1150447225');
+
 insert into partido_jugador (
    id_partido,
    id_jugador,

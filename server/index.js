@@ -183,22 +183,23 @@ app.post('/get-user-name', async (req, res) => {
 
             //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
             const queryBuscarNombre = {
-                text: 'select nombre from jugador where id = $1',
+                text: 'select nombre from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.jugador_partido_id = $1',
                 values: [req.body.id]
             }
             const resultadoNombre = await client.query(queryBuscarNombre);
 
             const nombre = resultadoNombre.rows[0].nombre;
 
+            client.release();client.release();
             res.send(nombre);
-            client.release();
         } else {
+            client.release();
             res.send("No hay ID a buscar")
         }
     } catch (err) {
         console.error(err);
-        res.send("Error creando partido " + err);
         client.release();
+        res.send("Error creando partido " + err);
     }
 });
 
@@ -212,7 +213,7 @@ app.get('/db', async (req, res) => {
         });
         //const results = { 'results': (result) ?  : null };
         res.send(JSON.stringify(results));
-        client.release();
+        
     } catch (err) {
         console.error(err);
         res.send("Error " + err);
