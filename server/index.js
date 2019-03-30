@@ -103,6 +103,7 @@ app.get('/', function (req, res) {
 app.post('/api/greeting', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.send(JSON.stringify({ a: 1 }));
 });
 
@@ -111,6 +112,7 @@ app.post('/crear-partido', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 
         generarNuevoPartido(pool, req.body.fecha, transporter);
 
@@ -127,6 +129,7 @@ app.post('/get-user-name', async (req, res) => {
         console.log("Obtener el nombre del user ID: " + req.body.id);
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         
         const client = await pool.connect()
         
