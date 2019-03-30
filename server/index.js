@@ -124,15 +124,15 @@ app.post('/crear-partido', async (req, res) => {
 // METODO para devolver el nombre del usuario
 app.post('/get-user-name', async (req, res) => {
     try {
+        console.log("Obtener el nombre del user ID: " + req.body.id);
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        console.log("Obtener el nombre del user!");
         
         const client = await pool.connect()
         
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const queryBuscarNombre = {
-            text: 'select nombre from jugador where id_jugador = $1',
+            text: 'select nombre from jugador where id = $1',
             values: [req.body.id]
         }
         const resultadoNombre = await client.query(queryBuscarNombre);
