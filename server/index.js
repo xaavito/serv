@@ -135,6 +135,7 @@ app.post('/api/greeting', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
     res.send(JSON.stringify({ a: 1 }));
 });
 
@@ -144,6 +145,7 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
 
         generarNuevoPartido(pool, req.body.fecha, transporter);
 
@@ -160,6 +162,7 @@ app.post('/confirmar', async (req, res) => {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
 
         generarConfirmacion(pool, req.body, transporter);
 
@@ -178,6 +181,7 @@ app.post('/get-user-name', async (req, res) => {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
         
         if (req.body.id) {
             //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
