@@ -81,6 +81,31 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
     }
 }
 
+// METODO para confirmar al evento
+const generarConfirmacion = async (pool, jugador, transporter) => {
+    try {
+        console.log("Generar Confirmacion!");
+        const client = await pool.connect();
+
+        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+        const partido = await client.query('select max(id) id_partido from partido');
+        const id_partido = partido.rows[0].id_partido;
+
+        //INSERTO EL NUEVO PARTIDO
+        const queryConfirmacion = {
+            text: 'update partido_jugador set condicion = $2 where id_jugador=$1 and id_partido = $3',
+            values: [jugador.jugador, jugador.confirma, id_partido]
+        }
+        await client.query(queryConfirmacion);
+
+        client.release();
+    }
+    catch (err) {
+        client.release();
+        throw err;
+    }
+}
+
 // ACCESO A LA BD
 const { Pool } = require('pg');
 
@@ -122,6 +147,22 @@ app.post('/crear-partido', async (req, res) => {
         generarNuevoPartido(pool, req.body.fecha, transporter);
 
         res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
+    } catch (err) {
+        console.error(err);
+        res.send("Error creando partido " + err);
+    }
+});
+
+// METODO ADMIN PARA GENERAR EL EVENTO
+app.post('/confirmar', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+        generarConfirmacion(pool, req.body, transporter);
+
+        res.send('Confirmacion exitosa!');
     } catch (err) {
         console.error(err);
         res.send("Error creando partido " + err);
