@@ -189,7 +189,7 @@ app.post('/get-user-name', async (req, res) => {
 
             const nombre = resultadoNombre.rows[0].nombre;
 
-            client.release();client.release();
+            client.release();
             res.send(nombre);
         } else {
             client.release();
