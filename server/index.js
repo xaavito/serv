@@ -16,64 +16,69 @@ const transporter = nodemailer.createTransport({
 
 // METODO QUE GENERA EL NUEVO PARTIDO, ARMA LA LISTA DE INVITADOS Y LAS INSERTA EN LA BD
 const generarNuevoPartido = async (pool, fecha, transporter) => {
-    console.log("Generar nuevo partido!");
-    const client = await pool.connect()
-    //INSERTO EL NUEVO PARTIDO
-    const queryInsertarPartido = {
-        text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
-        values: [fecha]
-    }
-    await client.query(queryInsertarPartido);
+    try {
+        console.log("Generar nuevo partido!");
+        const client = await pool.connect()
+        //INSERTO EL NUEVO PARTIDO
+        const queryInsertarPartido = {
+            text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
+            values: [fecha]
+        }
+        await client.query(queryInsertarPartido);
 
-    //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
-    const partido = await client.query('select max(id) id_partido from partido');
+        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+        const partido = await client.query('select max(id) id_partido from partido');
 
-    const id_partido = partido.rows[0].id_partido;
+        const id_partido = partido.rows[0].id_partido;
 
-    //TRAIGO TODOS LOS JUGADORES A LOS QUE SE LES VA A MANDAR LA INVITACION
-    const jugadores = await client.query('SELECT * FROM jugador');
+        //TRAIGO TODOS LOS JUGADORES A LOS QUE SE LES VA A MANDAR LA INVITACION
+        const jugadores = await client.query('SELECT * FROM jugador');
 
-    //INSERTO A TODOS LOS JUGADORES EN LA INVITACION COMO BAJA
-    jugadores.rows.forEach(async (jugador) => {
-        const queryInsertarJugadorPartido = {
-            text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion) values ($1,$2, $3, $4)',
-            values: [id_partido, jugador.id, false, 'B']
-        };
-        await client.query(queryInsertarJugadorPartido);
-    });
-
-    //LOS TRAIGO A ESOS JUGADORES RECIEN INSERTADOS
-    const queryJugadoresPorPartido = {
-        text: 'SELECT * FROM partido_jugador where id_partido = $1',
-        values: [id_partido]
-    };
-
-    const jugadoresPorPartido = await client.query(queryJugadoresPorPartido);
-    console.log("post jugadores");
-    jugadoresPorPartido.rows.forEach(async (jugador) => {
-        //POR CADA UNO TRAIGO SU INFORMACION POSTA
-        const infoJugador = {
-            text: 'SELECT * FROM jugador where id = $1',
-            values: [jugador.id_jugador]
-        };
-        const queryJugador = await client.query(infoJugador);
-        //LES MANDO UN EMAIL CON SU CODIGO PARTICULAR.
-        const mailOptions = {
-            from: 'partidodelosmiercoles@gmail.com',
-            to: queryJugador.rows[0].mail,
-            subject: 'Partido de los Miercoles, Fecha: ' + fecha,
-            html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/?id=' + jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
-        };
-
-        transporter.sendMail(mailOptions, function (err, info) {
-            if (err)
-                console.log("Error enviando mail partido " + err)
-            else
-                console.log("Salio el email aparentemente bien " + info);
+        //INSERTO A TODOS LOS JUGADORES EN LA INVITACION COMO BAJA
+        jugadores.rows.forEach(async (jugador) => {
+            const queryInsertarJugadorPartido = {
+                text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion) values ($1,$2, $3, $4)',
+                values: [id_partido, jugador.id, false, 'B']
+            };
+            await client.query(queryInsertarJugadorPartido);
         });
-    });
 
-    client.release();
+        //LOS TRAIGO A ESOS JUGADORES RECIEN INSERTADOS
+        const queryJugadoresPorPartido = {
+            text: 'SELECT * FROM partido_jugador where id_partido = $1',
+            values: [id_partido]
+        };
+
+        const jugadoresPorPartido = await client.query(queryJugadoresPorPartido);
+        console.log("post jugadores");
+        jugadoresPorPartido.rows.forEach(async (jugador) => {
+            //POR CADA UNO TRAIGO SU INFORMACION POSTA
+            const infoJugador = {
+                text: 'SELECT * FROM jugador where id = $1',
+                values: [jugador.id_jugador]
+            };
+            const queryJugador = await client.query(infoJugador);
+            //LES MANDO UN EMAIL CON SU CODIGO PARTICULAR.
+            const mailOptions = {
+                from: 'partidodelosmiercoles@gmail.com',
+                to: queryJugador.rows[0].mail,
+                subject: 'Partido de los Miercoles, Fecha: ' + fecha,
+                html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/?id=' + jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
+            };
+
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err)
+                    console.log("Error enviando mail partido " + err)
+                else
+                    console.log("Salio el email aparentemente bien " + info);
+            });
+        });
+        client.release();
+    }
+    catch (err) {
+        client.release();
+        throw err;
+    }
 }
 
 // ACCESO A LA BD
@@ -130,9 +135,9 @@ app.post('/get-user-name', async (req, res) => {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        
+
         const client = await pool.connect()
-        
+
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const queryBuscarNombre = {
             text: 'select nombre from jugador where id = $1',
@@ -143,9 +148,11 @@ app.post('/get-user-name', async (req, res) => {
         const nombre = resultadoNombre.rows[0].nombre;
 
         res.send(nombre);
+        client.release();
     } catch (err) {
         console.error(err);
         res.send("Error creando partido " + err);
+        client.release();
     }
 });
 
