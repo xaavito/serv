@@ -16,9 +16,10 @@ const transporter = nodemailer.createTransport({
 
 // METODO QUE GENERA EL NUEVO PARTIDO, ARMA LA LISTA DE INVITADOS Y LAS INSERTA EN LA BD
 const generarNuevoPartido = async (pool, fecha, transporter) => {
+    const client = await pool.connect();
     try {
         console.log("Generar nuevo partido!");
-        const client = await pool.connect()
+        
         //INSERTO EL NUEVO PARTIDO
         const queryInsertarPartido = {
             text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
@@ -83,10 +84,10 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
 
 // METODO para confirmar al evento
 const generarConfirmacion = async (pool, jugador, transporter) => {
+    const client = await pool.connect();
     try {
         console.log("Generar Confirmacion!");
-        const client = await pool.connect();
-
+        
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido from partido');
         const id_partido = partido.rows[0].id_partido;
@@ -171,16 +172,14 @@ app.post('/confirmar', async (req, res) => {
 
 // METODO para devolver el nombre del usuario
 app.post('/get-user-name', async (req, res) => {
+    const client = await pool.connect()
     try {
         console.log("Obtener el nombre del user ID: " + req.body.id);
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-
+        
         if (req.body.id) {
-
-            const client = await pool.connect()
-
             //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
             const queryBuscarNombre = {
                 text: 'select nombre from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.jugador_partido_id = $1',
