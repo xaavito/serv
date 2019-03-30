@@ -121,6 +121,31 @@ app.post('/crear-partido', async (req, res) => {
     }
 });
 
+// METODO para devolver el nombre del usuario
+app.post('/get-user-name', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        console.log("Obtener el nombre del user!");
+        
+        const client = await pool.connect()
+        
+        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+        const queryBuscarNombre = {
+            text: 'select nombre from jugador where id_jugador = $1',
+            values: [req.body.id]
+        }
+        const resultadoNombre = await client.query(queryBuscarNombre);
+
+        const nombre = resultadoNombre.rows[0].nombre;
+
+        res.send(nombre);
+    } catch (err) {
+        console.error(err);
+        res.send("Error creando partido " + err);
+    }
+});
+
 // METODO BASURA
 app.get('/db', async (req, res) => {
     try {
