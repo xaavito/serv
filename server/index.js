@@ -136,19 +136,24 @@ app.post('/get-user-name', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 
-        const client = await pool.connect()
+        if (req.body.id) {
 
-        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
-        const queryBuscarNombre = {
-            text: 'select nombre from jugador where id = $1',
-            values: [req.body.id]
+            const client = await pool.connect()
+
+            //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+            const queryBuscarNombre = {
+                text: 'select nombre from jugador where id = $1',
+                values: [req.body.id]
+            }
+            const resultadoNombre = await client.query(queryBuscarNombre);
+
+            const nombre = resultadoNombre.rows[0].nombre;
+
+            res.send(nombre);
+            client.release();
+        } else {
+            res.send("No hay ID a buscar")
         }
-        const resultadoNombre = await client.query(queryBuscarNombre);
-
-        const nombre = resultadoNombre.rows[0].nombre;
-
-        res.send(nombre);
-        client.release();
     } catch (err) {
         console.error(err);
         res.send("Error creando partido " + err);
