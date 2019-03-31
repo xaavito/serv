@@ -236,6 +236,27 @@ app.get('/get-confirmados', async (req, res) => {
     }
 });
 
+// METODO para devolver Historico de partidos
+app.get('/get-historico', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        console.log("Obtener COnfirmados al evento");
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
+
+        const resultadoHistorico = await client.query('SELECT fecha, goles_blanco, goles_azul FROM partido');
+
+        client.release();
+        res.send(resultadoHistorico.rows);
+    } catch (err) {
+        console.error(err);
+        client.release();
+        res.send("Error creando partido " + err);
+    }
+});
+
 // METODO BASURA
 app.get('/db', async (req, res) => {
     try {
