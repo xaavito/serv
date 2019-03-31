@@ -130,15 +130,6 @@ app.get('/', function (req, res) {
     res.send('Bievenido al sistema de creacion y confirmacion de partidos de los miercoles');
 });
 
-// METODO BASURA PARA PROBAR
-app.post('/api/greeting', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-    res.send(JSON.stringify({ a: 1 }));
-});
-
 // METODO ADMIN PARA GENERAR EL EVENTO
 app.post('/crear-partido', async (req, res) => {
     try {
@@ -254,23 +245,6 @@ app.get('/get-historico', async (req, res) => {
         console.error(err);
         client.release();
         res.send("Error creando partido " + err);
-    }
-});
-
-// METODO BASURA
-app.get('/db', async (req, res) => {
-    try {
-        const client = await pool.connect()
-        const result = await client.query('SELECT * FROM partido');
-        result.rows.forEach(function (element) {
-            console.log(element);
-        });
-        //const results = { 'results': (result) ?  : null };
-        res.send(JSON.stringify(results));
-
-    } catch (err) {
-        console.error(err);
-        res.send("Error " + err);
     }
 });
 
