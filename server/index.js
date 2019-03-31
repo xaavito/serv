@@ -19,7 +19,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
     const client = await pool.connect();
     try {
         console.log("Generar nuevo partido!");
-        
+
         //INSERTO EL NUEVO PARTIDO
         const queryInsertarPartido = {
             text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
@@ -87,7 +87,7 @@ const generarConfirmacion = async (pool, jugador, transporter) => {
     const client = await pool.connect();
     try {
         console.log("Generar Confirmacion!");
-        
+
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido from partido');
         const id_partido = partido.rows[0].id_partido;
@@ -182,7 +182,7 @@ app.post('/get-user-name', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-        
+
         if (req.body.id) {
             //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
             const queryBuscarNombre = {
@@ -206,6 +206,36 @@ app.post('/get-user-name', async (req, res) => {
     }
 });
 
+// METODO para devolver los confirmados
+app.get('/get-confirmados', async (req, res) => {
+    const client = await pool.connect()
+    try {
+        console.log("Obtener COnfirmados al evento");
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
+
+        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+        const partido = await client.query('select max(id) id_partido from partido');
+        const id_partido = partido.rows[0].id_partido;
+
+        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+        const queryConfirmados = {
+            text: 'select j.nombre, j.mail, pj.condicion from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.jugador_partido_id = $1',
+            values: [id_partido]
+        }
+        const resultadoConfirmados = await client.query(queryConfirmados);
+
+        client.release();
+        res.send(resultadoConfirmados.rows);
+    } catch (err) {
+        console.error(err);
+        client.release();
+        res.send("Error creando partido " + err);
+    }
+});
+
 // METODO BASURA
 app.get('/db', async (req, res) => {
     try {
@@ -216,7 +246,7 @@ app.get('/db', async (req, res) => {
         });
         //const results = { 'results': (result) ?  : null };
         res.send(JSON.stringify(results));
-        
+
     } catch (err) {
         console.error(err);
         res.send("Error " + err);
