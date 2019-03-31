@@ -222,7 +222,7 @@ app.get('/get-confirmados', async (req, res) => {
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const queryConfirmados = {
-            text: 'select j.nombre, j.mail, pj.condicion from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.jugador_partido_id = $1',
+            text: 'select j.nombre, j.mail, pj.condicion from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.id_partido = $1',
             values: [id_partido]
         }
         const resultadoConfirmados = await client.query(queryConfirmados);
