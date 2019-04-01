@@ -64,7 +64,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
                 from: 'partidodelosmiercoles@gmail.com',
                 to: queryJugador.rows[0].mail,
                 subject: 'Partido de los Miercoles, Fecha: ' + fecha,
-                html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/?id=' + jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
+                html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/Confirmar?id=' + jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
             };
 
             transporter.sendMail(mailOptions, function (err, info) {
