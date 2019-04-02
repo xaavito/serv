@@ -81,6 +81,45 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
         throw err;
     }
 }
+// METODO para AGREGAR INVITADO
+const agregarNuevoInvitado = async (pool, invitado, transporter) => {
+    const client = await pool.connect();
+    try {
+        console.log("AGREGAR INVITADO!");
+
+        //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
+        const partido = await client.query('select max(id) id_partido from partido');
+        const id_partido = partido.rows[0].id_partido;
+
+        //INSERTO EL NUEVO Jugador
+        const queryNuevoJugador = {
+            text: 'insert into partido_jugador (id_partido, id_jugador, invitado, asistio, condicion) values ($1, 000, $2, true, C)',
+            values: [id_partido, invitado.nombre]
+        }
+        await client.query(queryNuevoJugador);
+
+        if (invitado.email) {
+            const mailOptions = {
+                from: 'partidodelosmiercoles@gmail.com',
+                to: invitado.email,
+                subject: 'Partido de los Miercoles, Fecha: ' + fecha,
+                html: 'USTED HA SIDO CONFIRMADO AL PARTIDO!'
+            };
+
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err)
+                    console.log("Error enviando mail partido " + err)
+                else
+                    console.log("Salio el email aparentemente bien " + info);
+            });
+        }
+        client.release();
+    }
+    catch (err) {
+        client.release();
+        throw err;
+    }
+}
 
 // METODO para confirmar al evento
 const generarConfirmacion = async (pool, jugador, transporter) => {
@@ -147,7 +186,24 @@ app.post('/crear-partido', async (req, res) => {
     }
 });
 
-// METODO ADMIN PARA GENERAR EL EVENTO
+// METODO ADMIN PARA AGREGAR UN NUEVO INVITADO
+app.post('/agregar-invitado', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
+
+        agregarNuevoInvitado(pool, req.body, transporter);
+
+        res.send('JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.');
+    } catch (err) {
+        console.error(err);
+        res.send("Error creando partido " + err);
+    }
+});
+
+// METODO ADMIN PARA CONFIRMAR AL EVENTO POR PARTE DE LOS INVITADOS
 app.post('/confirmar', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'text/html');
@@ -228,6 +284,7 @@ app.get('/get-confirmados', async (req, res) => {
 });
 
 // METODO para devolver Historico de partidos
+// TODO
 app.get('/get-historico', async (req, res) => {
     const client = await pool.connect()
     try {

@@ -1,6 +1,6 @@
 CREATE TABLE partido (
    id SERIAL NOT NULL,
-   fecha date NOT NULL,
+   fecha date NOT NULL UNIQUE,
    goles_blanco numeric not null,
    goles_azul numeric not null,
    CONSTRAINT id_partido_pk PRIMARY KEY (id)
@@ -17,7 +17,8 @@ CREATE TABLE jugador (
 
 CREATE TABLE partido_jugador (
    id_partido INTEGER NOT NULL REFERENCES partido(id),
-   id_jugador INTEGER NOT NULL REFERENCES jugador(id),
+   id_jugador INTEGER NOT NULL,
+   invitado VARCHAR(1000),
    jugador_partido_id SERIAL NOT NULL,
    asistio boolean,
    condicion VARCHAR(20) not null
