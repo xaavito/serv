@@ -89,7 +89,7 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
         console.log("AGREGAR INVITADO!");
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
-        const partido = await client.query('select max(id), fecha id_partido from partido');
+        const partido = await client.query('select max(id), fecha id_partido from partido group by fecha');
         const id_partido = partido.rows[0].id_partido;
         const fecha = partido.rows[0].fecha;
 
