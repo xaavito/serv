@@ -78,6 +78,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
     }
     catch (err) {
         client.release();
+        console.log(err);
         throw err;
     }
 }
@@ -88,8 +89,9 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
         console.log("AGREGAR INVITADO!");
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
-        const partido = await client.query('select max(id) id_partido from partido');
+        const partido = await client.query('select max(id), fecha id_partido from partido');
         const id_partido = partido.rows[0].id_partido;
+        const fecha = partido.rows[0].fecha;
 
         //INSERTO EL NUEVO Jugador
         const queryNuevoJugador = {
@@ -117,6 +119,7 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
     }
     catch (err) {
         client.release();
+        console.log(err);
         throw err;
     }
 }
@@ -142,6 +145,7 @@ const generarConfirmacion = async (pool, jugador, transporter) => {
     }
     catch (err) {
         client.release();
+        console.log(err);
         throw err;
     }
 }
