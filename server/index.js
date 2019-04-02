@@ -124,6 +124,51 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
     }
 }
 
+// METODO para AGREGAR jugador
+const agregarJugador = async (pool, jugador, transporter) => {
+    const client = await pool.connect();
+    try {
+        console.log("AGREGAR JUGADOR!");
+
+        if (jugador && jugador.nombre && jugador.apellido && jugador.email) {
+            //INSERTO EL NUEVO Jugador
+            const queryNuevoJugador = {
+                text: 'insert into jugador (nombre, apellido, mail, telefono) values ($1, $2, $3, $4)',
+                values: [jugador.nombre, jugador.apellido, jugador.email, jugador.telefono]
+            }
+            await client.query(queryNuevoJugador);
+
+            if (jugador.email) {
+                const mailOptions = {
+                    from: 'partidodelosmiercoles@gmail.com',
+                    to: jugador.email,
+                    subject: 'Partido de los Miercoles',
+                    html: 'USTED HA SIDO AGREGADO al evento y futuros'
+                };
+
+                transporter.sendMail(mailOptions, function (err, info) {
+                    if (err)
+                        console.log("Error enviando mail partido " + err)
+                    else
+                        console.log("Salio el email aparentemente bien " + info);
+                });
+            }
+            client.release();
+        }
+        
+        else {
+            client.release();
+            throw new Error("Por favor Complete todos los datos obligatorios")
+        }
+        
+    }
+    catch (err) {
+        client.release();
+        console.log(err);
+        throw err;
+    }
+}
+
 // METODO para confirmar al evento
 const generarConfirmacion = async (pool, jugador, transporter) => {
     const client = await pool.connect();
@@ -199,6 +244,23 @@ app.post('/agregar-invitado', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
 
         agregarNuevoInvitado(pool, req.body, transporter);
+
+        res.send('JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.');
+    } catch (err) {
+        console.error(err);
+        res.send("Error creando partido " + err);
+    }
+});
+
+// METODO ADMIN PARA AGREGAR UN NUEVO JUGADOR
+app.post('/agregar-jugador', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
+
+        agregarJugador(pool, req.body, transporter);
 
         res.send('JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.');
     } catch (err) {
