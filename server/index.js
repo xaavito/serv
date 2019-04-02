@@ -93,8 +93,8 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
 
         //INSERTO EL NUEVO Jugador
         const queryNuevoJugador = {
-            text: 'insert into partido_jugador (id_partido, id_jugador, invitado, asistio, condicion) values ($1, 000, $2, true, C)',
-            values: [id_partido, invitado.nombre]
+            text: 'insert into partido_jugador (id_partido, id_jugador, invitado, asistio, condicion) values ($1, $2, $3, $4, $5)',
+            values: [id_partido, 000, invitado.nombre, true, 'C']
         }
         await client.query(queryNuevoJugador);
 
