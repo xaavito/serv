@@ -4,6 +4,9 @@ const pino = require('express-pino-logger')();
 var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
+//const pathToSwaggerUi = require('swagger-ui-dist').absolutePath();
+
+//app.use(express.static(pathToSwaggerUi));
 
 // CONFIGURACION DE CONEXION DE MAILS
 const transporter = nodemailer.createTransport({
@@ -82,6 +85,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
         throw err;
     }
 }
+
 // METODO para AGREGAR INVITADO
 const agregarNuevoInvitado = async (pool, invitado, transporter) => {
     const client = await pool.connect();
@@ -93,14 +97,21 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
         const id_partido = partido.rows[0].id_partido;
         const fecha = partido.rows[0].fecha;
 
-        //INSERTO EL NUEVO Jugador
-        const queryNuevoJugador = {
+        //INSERTO EL NUEVO INVITADO
+        const queryNuevoInvitado = {
             text: 'insert into partido_jugador (id_partido, id_jugador, nombre, asistio, condicion) values ($1, $2, $3, $4, $5)',
             values: [id_partido, 000, invitado.nombre, true, 'C']
         }
-        await client.query(queryNuevoJugador);
+        await client.query(queryNuevoInvitado);
 
         if (invitado.email) {
+            //SI TIENE MAIL LO INSERTO EN JUGADORES PARA LA PROXIMA
+            const queryNuevoInvitado = {
+                text: 'insert into jugador (nombre, apellido, mail, telefono) values ($1, $2, $3, $4)',
+                values: [invitado.nombre, 'INVITADO', invitado.email, '55555555']
+            }
+            await client.query(queryNuevoInvitado);
+
             const mailOptions = {
                 from: 'partidodelosmiercoles@gmail.com',
                 to: invitado.email,
@@ -155,12 +166,12 @@ const agregarJugador = async (pool, jugador, transporter) => {
             }
             client.release();
         }
-        
+
         else {
             client.release();
             throw new Error("Por favor Complete todos los datos obligatorios")
         }
-        
+
     }
     catch (err) {
         client.release();
@@ -183,7 +194,7 @@ const generarConfirmacion = async (pool, jugador) => {
 
         console.log("jugador.jugador " + jugador.jugador);
 
-        console.log(" jugador.confirma " +  jugador.confirma);
+        console.log(" jugador.confirma " + jugador.confirma);
 
         //INSERTO EL NUEVO PARTIDO
         const queryConfirmacion = {
