@@ -170,7 +170,7 @@ const agregarJugador = async (pool, jugador, transporter) => {
 }
 
 // METODO para confirmar al evento
-const generarConfirmacion = async (pool, jugador, transporter) => {
+const generarConfirmacion = async (pool, jugador) => {
     const client = await pool.connect();
     try {
         console.log("Generar Confirmacion!");
@@ -178,6 +178,12 @@ const generarConfirmacion = async (pool, jugador, transporter) => {
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido from partido');
         const id_partido = partido.rows[0].id_partido;
+
+        console.log("ID_PARTIDO " + id_partido);
+
+        console.log("jugador.jugador " + jugador.jugador);
+
+        console.log(" jugador.confirma " +  jugador.confirma);
 
         //INSERTO EL NUEVO PARTIDO
         const queryConfirmacion = {
