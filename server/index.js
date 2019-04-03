@@ -38,8 +38,8 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
         //INSERTO A TODOS LOS JUGADORES EN LA INVITACION COMO BAJA
         jugadores.rows.forEach(async (jugador) => {
             const queryInsertarJugadorPartido = {
-                text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion) values ($1,$2, $3, $4)',
-                values: [id_partido, jugador.id, false, 'B']
+                text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion, nombre) values ($1,$2, $3, $4, $5)',
+                values: [id_partido, jugador.id, true, 'B', jugador.nombre + ' ' + jugador.apellido]
             };
             await client.query(queryInsertarJugadorPartido);
         });
@@ -95,7 +95,7 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
 
         //INSERTO EL NUEVO Jugador
         const queryNuevoJugador = {
-            text: 'insert into partido_jugador (id_partido, id_jugador, invitado, asistio, condicion) values ($1, $2, $3, $4, $5)',
+            text: 'insert into partido_jugador (id_partido, id_jugador, nombre, asistio, condicion) values ($1, $2, $3, $4, $5)',
             values: [id_partido, 000, invitado.nombre, true, 'C']
         }
         await client.query(queryNuevoJugador);
@@ -341,7 +341,7 @@ app.get('/get-confirmados', async (req, res) => {
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const queryConfirmados = {
-            text: 'select j.nombre, j.mail, pj.condicion from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.id_partido = $1',
+            text: 'select pj.nombre, pj.condicion from partido_jugador pj where pj.id_partido = $1',
             values: [id_partido]
         }
         const resultadoConfirmados = await client.query(queryConfirmados);
