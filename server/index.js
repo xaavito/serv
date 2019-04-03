@@ -242,8 +242,20 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
+        
+        var fechaArray = 'req.body.fecha'.split('/');
+        var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+        var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]); 
+        if (dt.getDay() == 3) {
+            console.log('Miercoles!');
+            res.send('Miercoles!');
+        }
+        else {
+            console.log('no es Miercoles!');
+            res.send('no es miercoles ' + dt.getDay())
+        }
 
-        generarNuevoPartido(pool, req.body.fecha, transporter);
+        //generarNuevoPartido(pool, req.body.fecha, transporter);
 
         res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
     } catch (err) {
