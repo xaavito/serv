@@ -305,7 +305,7 @@ app.post('/get-user-name', async (req, res) => {
         if (req.body.id) {
             //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
             const queryBuscarNombre = {
-                text: 'select nombre from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.jugador_partido_id = $1',
+                text: 'select j.nombre from jugador j inner join partido_jugador pj on pj.id_jugador = j.id where pj.jugador_partido_id = $1',
                 values: [req.body.id]
             }
             const resultadoNombre = await client.query(queryBuscarNombre);
