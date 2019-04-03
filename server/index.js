@@ -187,7 +187,7 @@ const generarConfirmacion = async (pool, jugador) => {
 
         //INSERTO EL NUEVO PARTIDO
         const queryConfirmacion = {
-            text: 'update partido_jugador set condicion = $2 where id_jugador=$1 and id_partido = $3',
+            text: 'update partido_jugador set condicion = $2 where jugador_partido_id = $1 and id_partido = $3',
             values: [jugador.jugador, jugador.confirma, id_partido]
         }
         await client.query(queryConfirmacion);
