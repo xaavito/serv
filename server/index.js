@@ -246,16 +246,10 @@ app.post('/crear-partido', async (req, res) => {
         var fechaArray = 'req.body.fecha'.split('/');
         var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
         var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
-        if (dt.getDay() == 3) {
-            console.log('Miercoles!');
-            res.send('Miercoles!');
-        }
-        else {
-            console.log('no es Miercoles!');
-            res.send('no es miercoles ' + dt.getDay())
-        }
 
-        //generarNuevoPartido(pool, req.body.fecha, transporter);
+        console.log('Dia de la semana que se dispara el evento: ' + dt.getDay());
+
+        generarNuevoPartido(pool, req.body.fecha, transporter);
 
         res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
     } catch (err) {
