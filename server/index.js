@@ -66,24 +66,24 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
             const mailOptions = {
                 from: 'partidodelosmiercoles@gmail.com',
                 to: queryJugador.rows[0].mail,
-                subject: 'Partido de los Miercoles, Fecha: ' + fecha,
-                html: 'Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/Confirmar?id=' + jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja \n TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
-            };
+                subject: 'Partido de los Miercoles, Fecha: ' + fecha + ' U+26BD - Hora: 19:45',
+                html: 'Que tal ' + queryJugador.rows[0].nombre + '? Por favor, confirma yendo a<a href="https://fulbapp-cli.herokuapp.com/Confirmar?id=' + jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja <br />TODOS LOS DERECHOS RESERVADOS PARA JAVICORP'
+        };
 
-            transporter.sendMail(mailOptions, function (err, info) {
-                if (err)
-                    console.log("Error enviando mail partido " + err)
-                else
-                    console.log("Salio el email aparentemente bien " + info);
-            });
+        transporter.sendMail(mailOptions, function (err, info) {
+            if (err)
+                console.log("Error enviando mail partido " + err)
+            else
+                console.log("Salio el email aparentemente bien " + info);
         });
-        client.release();
-    }
+    });
+    client.release();
+}
     catch (err) {
-        client.release();
-        console.log(err);
-        throw err;
-    }
+    client.release();
+    console.log(err);
+    throw err;
+}
 }
 
 // METODO para AGREGAR INVITADO
@@ -242,10 +242,10 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-        
+
         var fechaArray = 'req.body.fecha'.split('/');
         var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
-        var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]); 
+        var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
         if (dt.getDay() == 3) {
             console.log('Miercoles!');
             res.send('Miercoles!');
