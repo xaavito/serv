@@ -5,8 +5,9 @@
   "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node-env-run server",
+    "server": "node-env-run server | pino-colada",
     "start": "npm run server",
+    "start:dev" : "node-env-run server --exec nodemon | pino-colada",
     "heroku-prebuild": "npm install --dev"
   },
   "repository": {

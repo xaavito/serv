@@ -1,6 +1,6 @@
 var express = require('express');
 const bodyParser = require('body-parser');
-const pino = require('express-pino-logger');
+const pino = require('express-pino-logger')();
 var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
