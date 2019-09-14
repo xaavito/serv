@@ -5,7 +5,7 @@ var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
 
-var http = require('http'); 
+var http = require('https'); 
 
 function startKeepAlive() {
     setInterval(function () {
@@ -29,7 +29,7 @@ function startKeepAlive() {
                 console.log("Error: " + err.message);
             });
         }
-    }, 1000 * 60 );
+    }, 1000 * 60 * 20);
 
     setInterval(function () {
         var hour = new Date().getHours();
@@ -52,7 +52,7 @@ function startKeepAlive() {
                 console.log("Error: " + err.message);
             });
         }
-    }, 1000 * 60 );
+    }, 1000 * 60 * 20);
 }
 
 // CONFIGURACION DE CONEXION DE MAILS
