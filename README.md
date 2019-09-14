@@ -49,3 +49,8 @@ heroku pg:psql
 
 ## Mailing
 https://codeburst.io/sending-an-email-using-nodemailer-gmail-7cfa0712a799
+
+## deploy
+login -> heroku login
+
+push -> git push heroku master

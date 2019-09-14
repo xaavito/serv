@@ -1,6 +1,6 @@
 var express = require('express');
 const bodyParser = require('body-parser');
-const pino = require('express-pino-logger')();
+const pino = require('express-pino-logger');
 var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
@@ -11,7 +11,7 @@ function startKeepAlive() {
     setInterval(function() {
         var options = {
             host: 'fulbapp-cli.herokuapp.com',
-            //port: 80,
+            port: 80,
             path: '/'
         };
         http.get(options, function(res) {
@@ -31,7 +31,7 @@ function startKeepAlive() {
     setInterval(function() {
         var options = {
             host: 'fulbapp-serv.herokuapp.com/',
-            //port: 80,
+            port: 80,
             path: '/'
         };
         http.get(options, function(res) {
