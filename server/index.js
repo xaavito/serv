@@ -5,12 +5,14 @@ var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
 
-var http = require('https'); 
+var http = require('https');
 
 function startKeepAlive() {
     setInterval(function () {
         var hour = new Date().getHours();
-        if (hour >= 7) {
+        var day = new Date().getDay();
+        //Estara activo sin dormir desde las 7 am hasta las 12 de lunes a miercoles.
+        if (hour >= 7 && day >= 1 && day <= 3) {
             var options = {
                 host: 'fulbapp-cli.herokuapp.com',
                 port: 443,
@@ -33,7 +35,9 @@ function startKeepAlive() {
 
     setInterval(function () {
         var hour = new Date().getHours();
-        if (hour >= 7) {
+        var day = new Date().getDay();
+        //Estara activo sin dormir desde las 7 am hasta las 12 de lunes a miercoles.
+        if (hour >= 7 && day >= 1 && day <= 3) {
             var options = {
                 host: 'fulbapp-serv.herokuapp.com',
                 port: 443,
