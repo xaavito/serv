@@ -54,3 +54,5 @@ https://codeburst.io/sending-an-email-using-nodemailer-gmail-7cfa0712a799
 login -> heroku login
 
 push -> git push heroku master
+
+En modo desa podemos usar algo asi... --exec nodemon | pino-colada"
