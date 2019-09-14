@@ -29,7 +29,7 @@ function startKeepAlive() {
                 console.log("Error: " + err.message);
             });
         }
-    }, 1000 * 60 * 20);
+    }, 1000 * 60 );
 
     setInterval(function () {
         var hour = new Date().getHours();
@@ -52,7 +52,7 @@ function startKeepAlive() {
                 console.log("Error: " + err.message);
             });
         }
-    }, 1000 * 60 * 20);
+    }, 1000 * 60 );
 }
 
 // CONFIGURACION DE CONEXION DE MAILS
