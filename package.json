@@ -1,7 +1,7 @@
 {
   "name": "serv",
   "version": "1.0.0",
-  "description": "",
+  "description": "Servidor de aplicacion para confirmacion de futbol de los miercoles",
   "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/xaavito/serv.git"
   },
-  "author": "",
+  "author": "Javier Martin Gonzalez",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/xaavito/serv/issues"
@@ -27,7 +27,8 @@
     "nodemailer": "^6.3.0",
     "npm-run-all": "^4.1.5",
     "pg": "^7.12.1",
-    "swagger-ui-dist": "^3.23.9"
+    "swagger-ui-dist": "^3.23.9",
+    "mem": ">=4.0.0"
   },
   "devDependencies": {
     "express-pino-logger": "^4.0.0",
