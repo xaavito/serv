@@ -10,7 +10,7 @@ var http = require('http');
 function startKeepAlive() {
     setInterval(function () {
         var hour = new Date().getHours();
-        if (hour >= 7 && hour < 1) {
+        if (hour >= 7) {
             var options = {
                 host: 'fulbapp-cli.herokuapp.com',
                 port: 443,
@@ -33,7 +33,7 @@ function startKeepAlive() {
 
     setInterval(function () {
         var hour = new Date().getHours();
-        if (hour >= 7 && hour < 1) {
+        if (hour >= 7) {
             var options = {
                 host: 'fulbapp-serv.herokuapp.com',
                 port: 443,
