@@ -11,7 +11,7 @@ function startKeepAlive() {
     setInterval(function() {
         var options = {
             host: 'fulbapp-cli.herokuapp.com',
-            port: 80,
+            port: 443,
             path: '/'
         };
         http.get(options, function(res) {
@@ -31,7 +31,7 @@ function startKeepAlive() {
     setInterval(function() {
         var options = {
             host: 'fulbapp-serv.herokuapp.com/',
-            port: 80,
+            port: 443,
             path: '/'
         };
         http.get(options, function(res) {
