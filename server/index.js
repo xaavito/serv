@@ -5,48 +5,54 @@ var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
 
-var http = require('http'); //importing http
+var http = require('http'); 
 
 function startKeepAlive() {
-    setInterval(function() {
-        var options = {
-            host: 'fulbapp-cli.herokuapp.com',
-            port: 443,
-            path: '/'
-        };
-        http.get(options, function(res) {
-            res.on('data', function(chunk) {
-                try {
-                    // optional logging... disable after it's working
-                    console.log("HEROKU RESPONSE: " + chunk);
-                } catch (err) {
-                    console.log(err.message);
-                }
+    setInterval(function () {
+        var hour = new Date().getHours();
+        if (hour >= 7 && hour < 1) {
+            var options = {
+                host: 'fulbapp-cli.herokuapp.com',
+                port: 443,
+                path: '/'
+            };
+            http.get(options, function (res) {
+                res.on('data', function (chunk) {
+                    try {
+                        // optional logging... disable after it's working
+                        console.log("HEROKU RESPONSE: " + chunk);
+                    } catch (err) {
+                        console.log(err.message);
+                    }
+                });
+            }).on('error', function (err) {
+                console.log("Error: " + err.message);
             });
-        }).on('error', function(err) {
-            console.log("Error: " + err.message);
-        });
-    }, 20 * 60 * 1000); // load every 20 minutes
+        }
+    }, 1000 * 60 * 20);
 
-    setInterval(function() {
-        var options = {
-            host: 'fulbapp-serv.herokuapp.com/',
-            port: 443,
-            path: '/'
-        };
-        http.get(options, function(res) {
-            res.on('data', function(chunk) {
-                try {
-                    // optional logging... disable after it's working
-                    console.log("HEROKU RESPONSE: " + chunk);
-                } catch (err) {
-                    console.log(err.message);
-                }
+    setInterval(function () {
+        var hour = new Date().getHours();
+        if (hour >= 7 && hour < 1) {
+            var options = {
+                host: 'fulbapp-serv.herokuapp.com',
+                port: 443,
+                path: '/'
+            };
+            http.get(options, function (res) {
+                res.on('data', function (chunk) {
+                    try {
+                        // optional logging... disable after it's working
+                        console.log("HEROKU RESPONSE: " + chunk);
+                    } catch (err) {
+                        console.log(err.message);
+                    }
+                });
+            }).on('error', function (err) {
+                console.log("Error: " + err.message);
             });
-        }).on('error', function(err) {
-            console.log("Error: " + err.message);
-        });
-    }, 20 * 60 * 1000); // load every 20 minutes
+        }
+    }, 1000 * 60 * 20);
 }
 
 // CONFIGURACION DE CONEXION DE MAILS
@@ -108,27 +114,27 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
                 from: 'partidodelosmiercoles@gmail.com',
                 to: queryJugador.rows[0].mail,
                 subject: 'Partido de los Miercoles, Fecha: ' + fecha + ' - ⚽️ - Hora: 19:45',
-                html: 'Que tal ' + queryJugador.rows[0].nombre + 
-                '? Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/Confirmar?id=' + 
-                jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja <br />' +
-                'TODOS LOS DERECHOS RESERVADOS PARA JAVICORP<br/>'+
-                'Se donde viven todos, si todos, y mas que nada vos, ' +  queryJugador.rows[0].nombre + ' asi que veni no seas gil.'
-        };
+                html: 'Que tal ' + queryJugador.rows[0].nombre +
+                    '? Por favor, confirma yendo a <a href="https://fulbapp-cli.herokuapp.com/Confirmar?id=' +
+                    jugador.jugador_partido_id + '">este</a> link y eligiendo si Confirmas, Suplente o Baja <br />' +
+                    'TODOS LOS DERECHOS RESERVADOS PARA JAVICORP<br/>' +
+                    'Se donde viven todos, si todos, y mas que nada vos, ' + queryJugador.rows[0].nombre + ' asi que veni no seas gil.'
+            };
 
-        transporter.sendMail(mailOptions, function (err, info) {
-            if (err)
-                console.log("Error enviando mail partido " + err)
-            else
-                console.log("Salio el email aparentemente bien " + info);
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err)
+                    console.log("Error enviando mail partido " + err)
+                else
+                    console.log("Salio el email aparentemente bien " + info);
+            });
         });
-    });
-    client.release();
-}
+        client.release();
+    }
     catch (err) {
-    client.release();
-    console.log(err);
-    throw err;
-}
+        client.release();
+        console.log(err);
+        throw err;
+    }
 }
 
 // METODO para AGREGAR INVITADO
