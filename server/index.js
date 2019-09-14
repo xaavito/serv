@@ -4,9 +4,50 @@ const pino = require('express-pino-logger')();
 var cors = require('cors');
 var app = express();
 var nodemailer = require('nodemailer');
-//const pathToSwaggerUi = require('swagger-ui-dist').absolutePath();
 
-//app.use(express.static(pathToSwaggerUi));
+var http = require('http'); //importing http
+
+function startKeepAlive() {
+    setInterval(function() {
+        var options = {
+            host: 'fulbapp-cli.herokuapp.com',
+            //port: 80,
+            path: '/'
+        };
+        http.get(options, function(res) {
+            res.on('data', function(chunk) {
+                try {
+                    // optional logging... disable after it's working
+                    console.log("HEROKU RESPONSE: " + chunk);
+                } catch (err) {
+                    console.log(err.message);
+                }
+            });
+        }).on('error', function(err) {
+            console.log("Error: " + err.message);
+        });
+    }, 20 * 60 * 1000); // load every 20 minutes
+
+    setInterval(function() {
+        var options = {
+            host: 'fulbapp-serv.herokuapp.com/',
+            //port: 80,
+            path: '/'
+        };
+        http.get(options, function(res) {
+            res.on('data', function(chunk) {
+                try {
+                    // optional logging... disable after it's working
+                    console.log("HEROKU RESPONSE: " + chunk);
+                } catch (err) {
+                    console.log(err.message);
+                }
+            });
+        }).on('error', function(err) {
+            console.log("Error: " + err.message);
+        });
+    }, 20 * 60 * 1000); // load every 20 minutes
+}
 
 // CONFIGURACION DE CONEXION DE MAILS
 const transporter = nodemailer.createTransport({
@@ -400,4 +441,5 @@ app.get('/get-historico', async (req, res) => {
 
 app.listen(process.env.PORT || 5001, function () {
     console.log('Example app listening on port ....!');
+    startKeepAlive();
 });
