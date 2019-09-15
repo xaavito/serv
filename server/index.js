@@ -76,6 +76,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
     try {
         console.log("generarNuevoPartido");
 
+        console.log(fecha);
         const fec = new Date(fecha);
         console.log(fec.toDateString());
 
