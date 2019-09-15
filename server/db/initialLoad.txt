@@ -1,9 +1,10 @@
 CREATE TABLE partido (
    id SERIAL NOT NULL,
    fecha date NOT NULL UNIQUE,
-   goles_blanco numeric not null,
-   goles_azul numeric not null,
-   CONSTRAINT id_partido_pk PRIMARY KEY (id)
+   goles_blanco numeric not null default 0,
+   goles_azul numeric not null default 0,
+   CONSTRAINT id_partido_pk PRIMARY KEY (id),
+   invitados_pendientes numeric not null default 0
 );
 
 CREATE TABLE jugador (
@@ -17,7 +18,7 @@ CREATE TABLE jugador (
 
 CREATE TABLE partido_jugador (
    id_partido INTEGER NOT NULL REFERENCES partido(id),
-   id_jugador INTEGER NOT NULL,
+   id_jugador INTEGER,
    nombre VARCHAR(1000),
    jugador_partido_id SERIAL NOT NULL,
    asistio boolean,
@@ -29,14 +30,35 @@ insert into jugador (
    apellido,
    mail,
    telefono
-) values ('Javier', 'Gonzalez', 'javiermartingonzalez@gmail.com', '1150447225');
+) values ('Prueba 1', 'Prueba 1', 'javiermartingonzalez@gmail.com', '1150447225');
 
 insert into jugador (
    nombre,
    apellido,
    mail,
    telefono
-) values ('Daniel', 'Perez Lopez', 'danielplopez@gmail.com', '1150447225');
+) values ('Prueba 2', 'Prueba 2', 'javiermartingonzalez@gmail.com', '1150447225');
+
+insert into jugador (
+   nombre,
+   apellido,
+   mail,
+   telefono
+) values ('Prueba 3', 'Prueba 3', 'javiermartingonzalez@gmail.com', '1150447225');
+
+insert into jugador (
+   nombre,
+   apellido,
+   mail,
+   telefono
+) values ('Prueba 4', 'Prueba 4', 'javiermartingonzalez@gmail.com', '1150447225');
+
+insert into jugador (
+   nombre,
+   apellido,
+   mail,
+   telefono
+) values ('Prueba 5', 'Prueba 5', 'javiermartingonzalez@gmail.com', '1150447225');
 
 insert into partido_jugador (
    id_partido,
@@ -44,6 +66,15 @@ insert into partido_jugador (
    asistio ,
    condicion) values (mmm,nnn, false, 'B')
 );
+
+ALTER TABLE partido
+  ALTER COLUMN goles_blanco set default 0;
+
+ALTER TABLE partido
+  ALTER COLUMN goles_azul set default 0;
+
+   goles_blanco numeric not null default 0,
+   goles_azul numeric not null default 0,
 
 
 
