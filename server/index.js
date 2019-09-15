@@ -13,6 +13,7 @@ function startKeepAlive() {
         var day = new Date().getDay();
         //Estara activo sin dormir desde las 7 am hasta las 12 de lunes a miercoles.
         if (hour >= 7 && day >= 1 && day <= 3) {
+            console.log("startKeepAlive CLI");
             var options = {
                 host: 'fulbapp-cli.herokuapp.com',
                 port: 443,
@@ -38,6 +39,7 @@ function startKeepAlive() {
         var day = new Date().getDay();
         //Estara activo sin dormir desde las 7 am hasta las 12 de lunes a miercoles.
         if (hour >= 7 && day >= 1 && day <= 3) {
+            console.log("startKeepAlive SERV");
             var options = {
                 host: 'fulbapp-serv.herokuapp.com',
                 port: 443,
@@ -72,12 +74,29 @@ const transporter = nodemailer.createTransport({
 const generarNuevoPartido = async (pool, fecha, transporter) => {
     const client = await pool.connect();
     try {
-        console.log("Generar nuevo partido!");
+        console.log("generarNuevoPartido");
+
+        const fec = new Date(fecha);
+        console.log(fec.toDateString());
+
+        //BUSCO EL ID DEL PARTIDO anterior
+        const partido_anterior = await client.query('select max(id) id_partido from partido');
+
+        const id_partido_anterior = partido_anterior.rows[0].id_partido;
+
+        //BUSCO LA CANTIDAD DE INVITADOS DEL PARTIDO ANTERIOR
+        const queryInvitadosPartidoAnterior = {
+            text: 'SELECT COUNT(1) cantidad_invitados FROM partido_jugador WEHERE jugador_id IS NULL AND id_partido = $1',
+            values: [id_partido_anterior]
+        }
+        const invitadosPartidoAnterior = await client.query(queryInvitadosPartidoAnterior);
+
+        const cantidad_invitados = invitadosPartidoAnterior.rows[0].cantidad_invitados;
 
         //INSERTO EL NUEVO PARTIDO
         const queryInsertarPartido = {
-            text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul) values (to_date($1,\'DD/MM/YYYY\'),0,0)',
-            values: [fecha]
+            text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul, invitados_pndientes) values (to_date($1,\'DD/MM/YYYY\'), 0, 0, $2)',
+            values: [fecha, cantidad_invitados]
         }
         await client.query(queryInsertarPartido);
 
@@ -92,7 +111,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
         //INSERTO A TODOS LOS JUGADORES EN LA INVITACION COMO BAJA
         jugadores.rows.forEach(async (jugador) => {
             const queryInsertarJugadorPartido = {
-                text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion, nombre) values ($1,$2, $3, $4, $5)',
+                text: 'insert into partido_jugador( id_partido, id_jugador, asistio, condicion, nombre) values ($1, $2, $3, $4, $5)',
                 values: [id_partido, jugador.id, true, 'B', jugador.nombre + ' ' + jugador.apellido]
             };
             await client.query(queryInsertarJugadorPartido);
@@ -105,6 +124,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
         };
 
         const jugadoresPorPartido = await client.query(queryJugadoresPorPartido);
+
         console.log("post jugadores");
         jugadoresPorPartido.rows.forEach(async (jugador) => {
             //POR CADA UNO TRAIGO SU INFORMACION POSTA
@@ -145,14 +165,14 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
 const agregarNuevoInvitado = async (pool, invitado, transporter) => {
     const client = await pool.connect();
     try {
-        console.log("AGREGAR INVITADO!");
+        console.log("agregarNuevoInvitado");
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido, to_char( fecha, \'DD/MM/YYYY\') fecha  from partido group by fecha order by fecha desc');
         const id_partido = partido.rows[0].id_partido;
         const fecha = partido.rows[0].fecha;
 
-        //INSERTO EL NUEVO INVITADO
+        //INSERTO EL NUEVO INVITADO como confirmado
         const queryNuevoInvitado = {
             text: 'insert into partido_jugador (id_partido, id_jugador, nombre, asistio, condicion) values ($1, $2, $3, $4, $5)',
             values: [id_partido, 000, invitado.nombre, true, 'C']
@@ -181,6 +201,118 @@ const agregarNuevoInvitado = async (pool, invitado, transporter) => {
                     console.log("Salio el email aparentemente bien " + info);
             });
         }
+        client.release();
+    }
+    catch (err) {
+        client.release();
+        console.log(err);
+        throw err;
+    }
+}
+
+// METODO para obtener el estado del jugador en el anterior partido
+const buscarEstadoAnterior = async (pool, jugador) => {
+    const client = await pool.connect();
+    try {
+        console.log("buscarEstadoAnterior");
+
+        //BUSCO EL ID DEL PARTIDO MAS RECIENTE
+        const partido = await client.query('select max(id) id_partido from partido order by fecha desc');
+        const id_partido = partido.rows[0].id_partido;
+
+        //BUSCO EL ID DEL PARTIDO ANTERIOR
+        const queryAnteriorPartido = {
+            text: 'select max(id) id_partido from partido where id_partido < $1 order by fecha desc',
+            values: [id_partido]
+        }
+        const partido_anterior = await client.query(queryAnteriorPartido);
+
+        const id_partido_anterior = partido_anterior.rows[0].id_partido;
+
+        //BUSCO EL ID DEL PARTIDO ANTERIOR
+        const queryAnteriorPartido = {
+            text: 'select max(id) id_partido from partido where id_partido < $1 order by fecha desc',
+            values: [id_partido]
+        }
+        const partido_anterior = await client.query(queryAnteriorPartido);
+
+        const id_partido_anterior = partido_anterior.rows[0].id_partido;
+
+        //BUSCO ESTADO DEL PARTIDO ANTERIOR SI JUGO.
+        const queryEstadoPartidoAnteriorPorJugador = {
+            text: 'select * from partido_jugador where id_partido = $1 and id_jugador = coalesce($1, id_jugador) and nombre = coalesce($2, nombre) order by fecha desc',
+            values: [jugador.id_jugador, jugador.nombre]
+        }
+        const estado_partido_anterior = await client.query(queryEstadoPartidoAnteriorPorJugador);
+
+        //es este el estado????
+        const estado_jugador_partido_anterior = estado_partido_anterior.rows[0].condicion;
+
+        client.release();
+
+        return estado_jugador_partido_anterior;
+    }
+    catch (err) {
+        client.release();
+        console.log(err);
+        throw err;
+    }
+}
+
+// METODO para buscar si hay cupo para un jugador
+const buscarSiHayCupoYAsignar = async (pool, jugador) => {
+    const client = await pool.connect();
+    try {
+        console.log("buscarSiHayCupoYAsignar");
+        const estadoJugador = '';
+        //BUSCO EL ID DEL PARTIDO MAS RECIENTE
+        const partido = await client.query('select max(id) id_partido, invitados_pendientes from partido order by fecha desc');
+        const id_partido = partido.rows[0].id_partido;
+        const invitados_pendientes = partido.rows[0].invitados_pendientes;
+
+        if (invitados_pendientes > 0) {
+            //LO PASAMOS A TITULAR
+            estadoJugador = 'C';
+
+            //RESTAMOS UN CUPO
+            const queryConfirmacion = {
+                text: 'update partido set invitados_pendientes = $1 WHERE id_partido = $2',
+                values: [--invitados_pendientes, id_partido]
+            }
+            await client.query(queryConfirmacion);
+        }
+        else {
+            //NO HAY CUPO, QUEDA DE SUPLENTE
+            estadoJugador = 'S';
+        }
+
+        client.release();
+
+        return estadoJugador;
+    }
+    catch (err) {
+        client.release();
+        console.log(err);
+        throw err;
+    }
+}
+
+// METODO para generar un hueco en el partido para que la gente pueda anotarse
+const generarHueco = async (pool, jugador) => {
+    const client = await pool.connect();
+    try {
+        console.log("generarHueco");
+        //BUSCO EL ID DEL PARTIDO MAS RECIENTE
+        const partido = await client.query('select max(id) id_partido, invitados_pendientes from partido order by fecha desc');
+        const id_partido = partido.rows[0].id_partido;
+        const invitados_pendientes = partido.rows[0].invitados_pendientes;
+
+        const queryConfirmacion = {
+            text: 'update partido set invitados_pendientes = $1 WHERE id_partido = $2',
+            values: [++invitados_pendientes, id_partido]
+        }
+        await client.query(queryConfirmacion);
+
         client.release();
     }
     catch (err) {
@@ -240,6 +372,7 @@ const generarConfirmacion = async (pool, jugador) => {
     const client = await pool.connect();
     try {
         console.log("Generar Confirmacion!");
+        const condicion_partido = '';
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido from partido');
@@ -249,12 +382,38 @@ const generarConfirmacion = async (pool, jugador) => {
 
         console.log("jugador.jugador " + jugador.jugador);
 
-        console.log(" jugador.confirma " + jugador.confirma);
+        console.log("jugador.confirma " + jugador.confirma);
+
+        const estado_anterior = buscarEstadoAnterior(pool, jugador);
+        console.log("estado_anterior " + estado_anterior);
+
+        const estado_actual = jugador.confirma;
+
+        // Si el tipo confirmo el partido y el anterioR fue titular JUEGA
+        if (estado_actual == 'C' && estado_anterior == 'C') {
+            condicion_partido = 'C'
+        }
+
+        // Si el tipo confirmo el partido y el anterior fue baja o suplente SUPLENTE
+        if (estado_actual == 'C' && (estado_anterior == 'B' || estado_anterior == 'S')) {
+            condicion_partido = buscarSiHayCupoYAsignar(pool, jugador)
+        }
+
+        // Si el tipo se dio de baja y el anterior fue titular y jugo, se da de baja, genera un hueco y eso dispara el poner el primer suplente disponible como titular.
+        if (estado_actual == 'B' && estado_anterior == 'C') {
+            condicion_partido = 'B'
+            generarHueco(pool);
+        }
+
+        // Si el tipo se dio de baja y el anterior fue baja u suplente, nada.
+        if (estado_actual == 'B' && (estado_anterior == 'B' || estado_anterior == 'S')) {
+            condicion_partido = 'B'
+        }
 
         //INSERTO EL NUEVO PARTIDO
         const queryConfirmacion = {
             text: 'update partido_jugador set condicion = $2 where jugador_partido_id = $1 and id_partido = $3',
-            values: [jugador.jugador, jugador.confirma, id_partido]
+            values: [jugador.jugador, condicion_partido, id_partido]
         }
         await client.query(queryConfirmacion);
 
