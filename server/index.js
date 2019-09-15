@@ -229,19 +229,10 @@ const buscarEstadoAnterior = async (pool, jugador) => {
 
         const id_partido_anterior = partido_anterior.rows[0].id_partido;
 
-        //BUSCO EL ID DEL PARTIDO ANTERIOR
-        const queryAnteriorPartido = {
-            text: 'select max(id) id_partido from partido where id_partido < $1 order by fecha desc',
-            values: [id_partido]
-        }
-        const partido_anterior = await client.query(queryAnteriorPartido);
-
-        const id_partido_anterior = partido_anterior.rows[0].id_partido;
-
         //BUSCO ESTADO DEL PARTIDO ANTERIOR SI JUGO.
         const queryEstadoPartidoAnteriorPorJugador = {
-            text: 'select * from partido_jugador where id_partido = $1 and id_jugador = coalesce($1, id_jugador) and nombre = coalesce($2, nombre) order by fecha desc',
-            values: [jugador.id_jugador, jugador.nombre]
+            text: 'select * from partido_jugador where id_partido = $1 and id_jugador = coalesce($2, id_jugador) and nombre = coalesce($3, nombre) order by fecha desc',
+            values: [id_partido_anterior, jugador.id_jugador, jugador.nombre]
         }
         const estado_partido_anterior = await client.query(queryEstadoPartidoAnteriorPorJugador);
 
