@@ -87,7 +87,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
 
         //BUSCO LA CANTIDAD DE INVITADOS DEL PARTIDO ANTERIOR
         const queryInvitadosPartidoAnterior = {
-            text: 'SELECT COUNT(1) cantidad_invitados FROM partido_jugador WEHERE jugador_id IS NULL AND id_partido = $1',
+            text: 'SELECT COUNT(1) cantidad_invitados FROM partido_jugador WHERE id_jugador IS NULL AND id_partido = $1',
             values: [id_partido_anterior]
         }
         const invitadosPartidoAnterior = await client.query(queryInvitadosPartidoAnterior);
@@ -96,7 +96,7 @@ const generarNuevoPartido = async (pool, fecha, transporter) => {
 
         //INSERTO EL NUEVO PARTIDO
         const queryInsertarPartido = {
-            text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul, invitados_pndientes) values (to_date($1,\'DD/MM/YYYY\'), 0, 0, $2)',
+            text: 'INSERT INTO partido (fecha, goles_blanco, goles_azul, invitados_pendientes) values (to_date($1,\'DD/MM/YYYY\'), 0, 0, $2)',
             values: [fecha, cantidad_invitados]
         }
         await client.query(queryInsertarPartido);
@@ -449,9 +449,9 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
 
-        var fechaArray = 'req.body.fecha'.split('/');
-        var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
-        var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
+        var fechaArray = req.body.fecha.split('/');
+        //var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+        var dt = new Date(fechaArray[2], fechaArray[1], fechaArray[0]);
         console.log('Dia de la semana que se dispara el evento: ' + req.body.fecha);
 
         console.log('Dia de la semana que se dispara el evento: ' + dt.getDay());
