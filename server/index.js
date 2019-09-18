@@ -318,7 +318,7 @@ const generarHueco = async (pool, jugador) => {
 const agregarJugador = async (pool, jugador, transporter) => {
     const client = await pool.connect();
     try {
-        console.log("AGREGAR JUGADOR!");
+        console.log("agregarJugador");
 
         if (jugador && jugador.nombre && jugador.apellido && jugador.email) {
             //INSERTO EL NUEVO Jugador
@@ -363,7 +363,7 @@ const agregarJugador = async (pool, jugador, transporter) => {
 const generarConfirmacion = async (pool, jugador) => {
     const client = await pool.connect();
     try {
-        console.log("Generar Confirmacion!");
+        console.log("generarConfirmacion");
         const condicion_partido = '';
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
@@ -450,11 +450,10 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
 
         var fechaArray = req.body.fecha.split('/');
-        //var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
         var dt = new Date(fechaArray[2], fechaArray[1], fechaArray[0]);
-        console.log('Dia de la semana que se dispara el evento: ' + req.body.fecha);
+        console.log('Dia de la semana que se dispara el evento por request: ' + req.body.fecha);
 
-        console.log('Dia de la semana que se dispara el evento: ' + dt.getDay());
+        console.log('Dia de la semana que se dispara el evento por parseo de fecha: ' + dt.getDay());
 
         generarNuevoPartido(pool, req.body.fecha, transporter);
 
