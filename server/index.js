@@ -455,9 +455,15 @@ app.post('/crear-partido', async (req, res) => {
 
         console.log('Dia de la semana que se dispara el evento por parseo de fecha: ' + dt.getDay());
 
-        generarNuevoPartido(pool, req.body.fecha, transporter);
+        if (dt.getDay() == 3) {
+            generarNuevoPartido(pool, req.body.fecha, transporter);
 
-        res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
+            res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
+        }
+        else {
+            res.send('El partido solo puede ser iniciado un dia miercoles como marca el pergamino sagrado');
+        }
+        
     } catch (err) {
         console.error(err);
         res.send("Error creando partido " + err);
