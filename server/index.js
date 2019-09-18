@@ -455,7 +455,7 @@ app.post('/crear-partido', async (req, res) => {
 
         console.log('Dia de la semana que se dispara el evento por parseo de fecha: ' + dt.getDay());
 
-        if (dt.getDay() == 3) {
+        if (dt.getDay() === 3) {
             generarNuevoPartido(pool, req.body.fecha, transporter);
 
             res.send('Partido Creado exitosamente, enviando invitaciones a los jugadores');
