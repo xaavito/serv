@@ -462,7 +462,7 @@ app.post('/crear-partido', async (req, res) => {
         }
         else {
             // ver de enviar error code...
-            res.send('El partido solo puede ser iniciado un dia miercoles como marca el pergamino sagrado');
+            res.status(501).send('El partido solo puede ser iniciado un dia miercoles como marca el pergamino sagrado');
         }
         
     } catch (err) {
