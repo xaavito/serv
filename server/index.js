@@ -450,7 +450,7 @@ app.post('/crear-partido', async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
 
         var fechaArray = req.body.fecha.split('/');
-        var dt = new Date(fechaArray[2], fechaArray[1], fechaArray[0]);
+        var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
         console.log('Dia de la semana que se dispara el evento por request: ' + req.body.fecha);
 
         console.log('Dia de la semana que se dispara el evento por parseo de fecha: ' + dt.getDay());
