@@ -451,7 +451,7 @@ app.post('/crear-partido', async (req, res) => {
 
         var fechaArray = req.body.fecha.split('/');
         var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
-        console.log('Dia de la semana que se dispara el evento por request: ' + req.body.fecha);
+        //console.log('Dia de la semana que se dispara el evento por request: ' + req.body.fecha);
 
         console.log('Dia de la semana que se dispara el evento por parseo de fecha: ' + dt.getDay());
 
@@ -469,7 +469,7 @@ app.post('/crear-partido', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(504).send({mensaje: err});
-        res.send("Error creando partido " + err);
+        //res.send("Error creando partido " + err);
     }
 });
 
