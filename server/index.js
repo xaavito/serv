@@ -451,7 +451,6 @@ app.post('/crear-partido', async (req, res) => {
 
         var fechaArray = req.body.fecha.split('/');
         var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
-        //console.log('Dia de la semana que se dispara el evento por request: ' + req.body.fecha);
 
         console.log('Dia de la semana que se dispara el evento por parseo de fecha: ' + dt.getDay());
 
@@ -461,15 +460,12 @@ app.post('/crear-partido', async (req, res) => {
             res.status(200).send({mensaje: 'Partido Creado exitosamente, enviando invitaciones a los jugadores'});
         }
         else {
-            // ver de enviar error code...
-            //res.send('El partido solo puede ser iniciado un dia miercoles como marca el pergamino sagrado');
             res.status(503).send({mensaje: 'El partido solo puede ser iniciado un dia miercoles como marca el pergamino sagrado'});
         }
 
     } catch (err) {
         console.error(err);
         res.status(504).send({mensaje: err});
-        //res.send("Error creando partido " + err);
     }
 });
 
@@ -483,10 +479,10 @@ app.post('/agregar-invitado', async (req, res) => {
 
         agregarNuevoInvitado(pool, req.body, transporter);
 
-        res.send('JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.');
+        res.status(200).send({mensaje: 'JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.'});
     } catch (err) {
         console.error(err);
-        res.send("Error creando partido " + err);
+        res.status(504).send({mensaje: err});
     }
 });
 
@@ -500,10 +496,10 @@ app.post('/agregar-jugador', async (req, res) => {
 
         agregarJugador(pool, req.body, transporter);
 
-        res.send('JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.');
+        res.status(200).send({mensaje: 'JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.'});
     } catch (err) {
         console.error(err);
-        res.send("Error creando partido " + err);
+        res.status(504).send({mensaje: err});
     }
 });
 
@@ -517,10 +513,10 @@ app.post('/confirmar', async (req, res) => {
 
         generarConfirmacion(pool, req.body, transporter);
 
-        res.send('Confirmacion exitosa!');
+        res.status(200).send({mensaje: 'Confirmacion Exitosa!'});
     } catch (err) {
         console.error(err);
-        res.send("Error creando partido " + err);
+        res.status(504).send({mensaje: err});
     }
 });
 
@@ -548,12 +544,12 @@ app.post('/get-user-name', async (req, res) => {
             res.send(nombre);
         } else {
             client.release();
-            res.send("No hay ID a buscar")
+            res.status(504).send({mensaje: 'No Hay ID a Buscar'});
         }
     } catch (err) {
-        console.error(err);
         client.release();
-        res.send("Error creando partido " + err);
+        console.error(err);
+        res.status(504).send({mensaje: err});
     }
 });
 
@@ -581,9 +577,9 @@ app.get('/get-confirmados', async (req, res) => {
         client.release();
         res.send(resultadoConfirmados.rows);
     } catch (err) {
-        console.error(err);
         client.release();
-        res.send("Error creando partido " + err);
+        console.error(err);
+        res.status(504).send({mensaje: err});
     }
 });
 
@@ -603,9 +599,9 @@ app.get('/get-historico', async (req, res) => {
         client.release();
         res.send(resultadoHistorico.rows);
     } catch (err) {
-        console.error(err);
         client.release();
-        res.send("Error creando partido " + err);
+        console.error(err);
+        res.status(504).send({mensaje: err});
     }
 });
 
