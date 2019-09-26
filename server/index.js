@@ -541,7 +541,7 @@ app.post('/get-user-name', async (req, res) => {
             const nombre = resultadoNombre.rows[0].nombre;
 
             client.release();
-            res.send(nombre);
+            res.status(200).send({mensaje: nombre});
         } else {
             client.release();
             res.status(504).send({mensaje: 'No Hay ID a Buscar'});
@@ -575,7 +575,7 @@ app.get('/get-confirmados', async (req, res) => {
         const resultadoConfirmados = await client.query(queryConfirmados);
 
         client.release();
-        res.send(resultadoConfirmados.rows);
+        res.status(200).send(resultadoConfirmados.rows);
     } catch (err) {
         client.release();
         console.error(err);
@@ -597,7 +597,7 @@ app.get('/get-historico', async (req, res) => {
         const resultadoHistorico = await client.query('SELECT fecha, goles_blanco, goles_azul FROM partido');
 
         client.release();
-        res.send(resultadoHistorico.rows);
+        res.status(200).send(resultadoHistorico.rows);
     } catch (err) {
         client.release();
         console.error(err);
