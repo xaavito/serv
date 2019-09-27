@@ -376,7 +376,27 @@ const generarConfirmacion = async (pool, jugador) => {
 
         console.log("jugador.confirma " + jugador.confirma);
 
-        const estado_anterior = buscarEstadoAnterior(pool, jugador);
+        //-----------------------
+        //BUSCO EL ID DEL PARTIDO ANTERIOR
+        const queryAnteriorPartido = {
+            text: 'select max(id) id_partido from partido where id_partido < $1 order by fecha desc',
+            values: [id_partido]
+        }
+        const partido_anterior = await client.query(queryAnteriorPartido);
+
+        const id_partido_anterior = partido_anterior.rows[0].id_partido;
+
+        //BUSCO ESTADO DEL PARTIDO ANTERIOR SI JUGO.
+        const queryEstadoPartidoAnteriorPorJugador = {
+            text: 'select * from partido_jugador where id_partido = $1 and id_jugador = coalesce($2, id_jugador) and nombre = coalesce($3, nombre) order by fecha desc',
+            values: [id_partido_anterior, jugador.id_jugador, jugador.nombre]
+        }
+        const estado_partido_anterior = await client.query(queryEstadoPartidoAnteriorPorJugador);
+
+        //es este el estado????
+        const estado_anterior = estado_partido_anterior.rows[0].condicion;
+        //----------------------------
+        //const estado_anterior = buscarEstadoAnterior(pool, jugador);
         console.log("estado_anterior " + estado_anterior);
 
         const estado_actual = jugador.confirma;
@@ -575,6 +595,7 @@ app.get('/get-confirmados', async (req, res) => {
         const resultadoConfirmados = await client.query(queryConfirmados);
 
         client.release();
+        //si falla usar .json(resultadoConfirmados.rows)
         res.status(200).send(resultadoConfirmados.rows);
     } catch (err) {
         client.release();
