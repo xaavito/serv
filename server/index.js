@@ -379,7 +379,7 @@ const generarConfirmacion = async (pool, jugador) => {
         //-----------------------
         //BUSCO EL ID DEL PARTIDO ANTERIOR
         const queryAnteriorPartido = {
-            text: 'select max(id) id_partido from partido where id_partido < $1 order by fecha desc',
+            text: 'select max(id) id_partido from partido where id < $1 order by fecha desc',
             values: [id_partido]
         }
         const partido_anterior = await client.query(queryAnteriorPartido);
