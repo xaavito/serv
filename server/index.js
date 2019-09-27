@@ -258,7 +258,7 @@ const buscarSiHayCupoYAsignar = async (pool, jugador) => {
         console.log("buscarSiHayCupoYAsignar");
         const estadoJugador = '';
         //BUSCO EL ID DEL PARTIDO MAS RECIENTE
-        const partido = await client.query('select max(id) id_partido, invitados_pendientes from partido order by fecha desc');
+        const partido = await client.query('select id id_partido, invitados_pendientes from partido order by fecha desc');
         const id_partido = partido.rows[0].id_partido;
         const invitados_pendientes = partido.rows[0].invitados_pendientes;
 
