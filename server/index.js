@@ -364,7 +364,7 @@ const generarConfirmacion = async (pool, jugador) => {
     const client = await pool.connect();
     try {
         console.log("generarConfirmacion");
-        const condicion_partido = '';
+        let condicion_partido = '';
 
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido from partido');
