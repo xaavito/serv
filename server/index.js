@@ -232,7 +232,7 @@ const buscarEstadoAnterior = async (pool, jugador) => {
 
         //BUSCO ESTADO DEL PARTIDO ANTERIOR SI JUGO.
         const queryEstadoPartidoAnteriorPorJugador = {
-            text: 'select * from partido_jugador where id_partido = $1 and id_jugador = coalesce($2, id_jugador) and nombre = coalesce($3, nombre) order by fecha desc',
+            text: 'select * from partido_jugador where id_partido = $1 and id_jugador = coalesce($2, id_jugador) and nombre = coalesce($3, nombre)',
             values: [id_partido_anterior, jugador.id_jugador, jugador.nombre]
         }
         const estado_partido_anterior = await client.query(queryEstadoPartidoAnteriorPorJugador);
@@ -379,7 +379,7 @@ const generarConfirmacion = async (pool, jugador) => {
         //-----------------------
         //BUSCO EL ID DEL PARTIDO ANTERIOR
         const queryAnteriorPartido = {
-            text: 'select max(id) id_partido from partido where id < $1 order by fecha desc',
+            text: 'select max(id) id_partido from partido where id < $1',
             values: [id_partido]
         }
         const partido_anterior = await client.query(queryAnteriorPartido);
