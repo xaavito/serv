@@ -442,7 +442,7 @@ const generarConfirmacion = async (pool, jugador) => {
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL || "postgres://xofyuentmlvgjc:724f9bd455717d4d2efcec3891722f934711dc09ddc29d0fa28b575608240cd5@ec2-50-17-227-28.compute-1.amazonaws.com:5432/dfj813i1n6r65",    
     ssl: true
 });
 
@@ -466,9 +466,6 @@ app.post('/crear-partido', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
         var fechaArray = req.body.fecha.split('/');
         var dt = new Date(fechaArray[2], fechaArray[1] - 1, fechaArray[0]);
 
@@ -494,9 +491,6 @@ app.post('/agregar-invitado', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
         agregarNuevoInvitado(pool, req.body, transporter);
 
         res.status(200).send({mensaje: 'JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.'});
@@ -511,9 +505,6 @@ app.post('/agregar-jugador', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
         agregarJugador(pool, req.body, transporter);
 
         res.status(200).send({mensaje: 'JUGADOR CONFIRMADO MANUALMENTE, se le ha informado.'});
@@ -528,9 +519,6 @@ app.post('/confirmar', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
         generarConfirmacion(pool, req.body, transporter);
 
         res.status(200).send({mensaje: 'Confirmacion Exitosa!'});
@@ -547,9 +535,6 @@ app.post('/get-user-name', async (req, res) => {
         console.log("Obtener el nombre del user ID: " + req.body.id);
         res.setHeader('Content-Type', 'text/html');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
         if (req.body.id) {
             //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
             const queryBuscarNombre = {
@@ -580,9 +565,6 @@ app.get('/get-confirmados', async (req, res) => {
         console.log("Obtener COnfirmados al evento");
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
         //BUSCO EL ID RECIEN INSERTADO DEL PARTIDO
         const partido = await client.query('select max(id) id_partido from partido');
         const id_partido = partido.rows[0].id_partido;
@@ -612,10 +594,7 @@ app.get('/get-historico', async (req, res) => {
         console.log("Obtener COnfirmados al evento");
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://fulbapp-cli.herokuapp.com');
-
-        const resultadoHistorico = await client.query('SELECT fecha, goles_blanco, goles_azul FROM partido');
+       const resultadoHistorico = await client.query('SELECT fecha, goles_blanco, goles_azul FROM partido');
 
         client.release();
         res.status(200).send(resultadoHistorico.rows);

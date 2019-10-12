@@ -57,5 +57,5 @@ push -> git push heroku master
 
 En modo desa podemos usar algo asi... --exec nodemon | pino-colada"
 
-##for dev
+## Para modo desarrollo
 npm run start:dev
